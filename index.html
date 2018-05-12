@@ -161,7 +161,9 @@
             5.9,3.0,5.1,1.8,Iris-virginica\n\
             ";
             
-            console.log(loadData(irises));
+            var data = loadData(irises);
+            console.log(data);
+            console.log(new Network([4, 5, 3]).feedForward(data.trainingData[0].features));
 
         </script>
     </body>

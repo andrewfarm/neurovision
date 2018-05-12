@@ -22,7 +22,7 @@ function mul(a, b) {
 
 /* Applies a function to each element in a matrix and returns the matrix of the results */
 function apply(f, m) {
-    var result = new Array(a.length);
+    var result = new Array(m.length);
     for (var i = 0; i < m.length; i++) {
         result[i] = new Array(m[0].length);
         for (var j = 0; j < m[0].length; j++) {
@@ -69,6 +69,18 @@ function transpose(m) {
         result[i] = new Array(m.length);
         for (var j = 0; j < m.length; j++) {
             result[i][j] = m[j][i];
+        }
+    }
+    return result;
+}
+
+/* Initializes an n by m matrix with random values between -1.0 and 1.0 */
+function randomMatrix(n, m) {
+    var result = new Array(n);
+    for (var i = 0; i < n; i++) {
+        result[i] = new Array(m);
+        for (var j = 0; j < m; j++) {
+            result[i][j] = Math.random() * 2.0 - 1.0;
         }
     }
     return result;
@@ -159,4 +171,47 @@ function loadData(dataString) {
         validationData: data.slice(Math.floor(data.length * 0.6), Math.floor(data.length * 0.8)),
         testData:       data.slice(Math.floor(data.length * 0.8))
     };
+}
+
+
+/****************************************
+ * Neural network
+ ****************************************/
+
+function sigmoid(p) {
+    return 1.0 / (1.0 + Math.exp(-p));
+}
+
+function sigmoidPrime(p) {
+    var sigmoid_p = sigmoid(p);
+    return sigmoid_p * (1.0 - sigmoid_p);
+}
+
+class Network {
+    
+    constructor(sizes) {
+        this.numLayers = sizes.length;
+        
+        // each weight matrix is indexed such that w[i][j] is the weight from
+        // the jth neuron to the ith neuron
+        this.weights = [];
+        // weights from the "bias neuron" (which always has an implicit
+        // activation of 1.0) to the neurons in each layer
+        this.biases = [];
+        
+        for (var l = 1; l < sizes.length; l++) {
+            this.weights.push(randomMatrix(sizes[l], sizes[l-1]));
+            this.biases.push(randomMatrix(sizes[l], 1));
+        }
+    }
+    
+    /* Feeds the input vector through the network and returns the vector of
+     * output activations */
+    feedForward(input) {
+        var output = input;
+        for (var i = 0; i < this.numLayers - 1; i++) {
+            output = apply(sigmoid, add(mul(this.weights[i], output), this.biases[i]));
+        }
+        return output;
+    }
 }
