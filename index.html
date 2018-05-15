@@ -8,9 +8,11 @@
         <p id="epoch"></p>
         <p id="accuracy"></p>
         <p id="error"></p>
-        <button id="runbutton" onclick="run()">Run</button>
-        <canvas id="canvas">Your browser <em>sucks</em>.</canvas>
+        <button id="startbutton" style="display: block" onclick="start()">Start</button>
+        <button id="stopbutton" style="display: none" onclick="stop()">Stop</button>
+        <canvas id="canvas" width="600" height="600">Your browser <em>sucks</em>.</canvas>
         <script src="network.js"></script>
+        <script src="vision.js"></script>
         <script type="text/javascript">
             var irises = "\
 5.1,3.5,1.4,0.2,Iris-setosa\n\
@@ -168,11 +170,17 @@
             var epochField = document.getElementById("epoch");
             var accuracyField = document.getElementById("accuracy");
             var errorField = document.getElementById("error");
+            
+            var running = false;
 
             var data;
             var network;
             var eta = 0.1;
             var epoch = 1;
+            
+            data = loadData(irises);
+            console.log(data);
+            network = new Network([4, 5, 3]);
 
             function updateAndRender() {
                 for (var i = 0; i < 10; i++) {
@@ -199,15 +207,23 @@
                 errorField.innerHTML = "avg. total error: " + avgTotalError;
                 
                 epoch++;
+                
+                if (running) {
+                    requestAnimationFrame(updateAndRender);
+                }
+            }
+
+            function start() {
+                document.getElementById("startbutton").style.display = "none";
+                document.getElementById("stopbutton").style.display = "block";
+                running = true;
                 requestAnimationFrame(updateAndRender);
             }
 
-            function run() {
-                document.getElementById("runbutton").remove();
-                data = loadData(irises);
-                console.log(data);
-                network = new Network([4, 5, 3]);
-                requestAnimationFrame(updateAndRender);
+            function stop() {
+                document.getElementById("startbutton").style.display = "block";
+                document.getElementById("stopbutton").style.display = "none";
+                running = false;
             }
         </script>
     </body>
