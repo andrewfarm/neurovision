@@ -181,6 +181,7 @@
             data = loadData(irises);
             console.log(data);
             network = new Network([4, 5, 3]);
+            render();
 
             function updateAndRender() {
                 for (var i = 0; i < 10; i++) {
@@ -207,6 +208,8 @@
                 errorField.innerHTML = "avg. total error: " + avgTotalError;
                 
                 epoch++;
+                
+                render();
                 
                 if (running) {
                     requestAnimationFrame(updateAndRender);

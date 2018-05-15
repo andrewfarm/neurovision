@@ -1,4 +1,4 @@
-const VERT = '\
+const QUAD_VERT = '\
 #version 300 es\n\
 \n\
 precision mediump float;\n\
@@ -8,12 +8,12 @@ in vec2 a_pos;\n\
 out vec2 v_pos;\n\
 \n\
 void main() {\n\
-    v_pos = a_pos;\n\
+    v_pos = (a_pos + vec2(1.0, 1.0)) * 0.5;\n\
     gl_Position = vec4(a_pos, 0, 1);\n\
 }\n\
 ';
 
-const FRAG = '\
+const QUAD_FRAG = '\
 #version 300 es\n\
 \n\
 precision mediump float;\n\
@@ -33,28 +33,34 @@ const gl = canvas.getContext("webgl2");
 
 var quadPosBuffer;
 var quadVAO;
-var shaderProgram;
+var quadShaderProgram;
+
+var examplesBuffer;
+var examplesVAO;
+var examplesShaderProgram;
 
 if (gl) {
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(0, 0, 0, 1);
     
-    shaderProgram = createProgram(gl, VERT, FRAG);
+    quadShaderProgram = createProgram(gl, QUAD_VERT, QUAD_FRAG);
     
     quadPosBuffer = createBuffer(gl, new Float32Array(
             [-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]));
     quadVAO = gl.createVertexArray();
     gl.bindVertexArray(this.quadVAO);
-    bindAttribute(gl, quadPosBuffer, shaderProgram.a_pos, 2);
+    bindAttribute(gl, quadPosBuffer, quadShaderProgram.a_pos, 2);
     gl.bindVertexArray(null);
-    
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    
-    gl.useProgram(shaderProgram.programID);
-    gl.bindVertexArray(quadVAO);
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
 } else {
     document.body.innerHTML = "Your browser doesn't support WebGL 2.";
+}
+
+function render() {
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    
+    gl.useProgram(quadShaderProgram.programID);
+    gl.bindVertexArray(quadVAO);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
 }
 
 // https://github.com/mapbox/webgl-wind
