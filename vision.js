@@ -9,7 +9,7 @@ out vec2 v_pos;\n\
 \n\
 void main() {\n\
     v_pos = (a_pos + vec2(1.0, 1.0)) * 0.5;\n\
-    gl_Position = vec4(a_pos, 0, 1);\n\
+    gl_Position = vec4(a_pos, 0.0, 1.0);\n\
 }\n\
 ';
 
@@ -23,7 +23,32 @@ in vec2 v_pos;\n\
 out vec4 color;\n\
 \n\
 void main() {\n\
-    color = vec4(v_pos.x, v_pos.y, 0, 1);\n\
+    color = vec4(v_pos.x, v_pos.y, 0.0, 1.0);\n\
+}\n\
+';
+
+const EXAMPLES_VERT = '\
+#version 300 es\n\
+\n\
+precision mediump float;\n\
+\n\
+in vec2 a_pos;\n\
+\n\
+void main() {\n\
+    gl_Position = vec4(a_pos * 2.0 - vec2(1.0, 1.0), 0.0, 1.0);\n\
+    gl_PointSize = 10.0;\n\
+}\n\
+';
+
+const EXAMPLES_FRAG = '\
+#version 300 es\n\
+\n\
+precision mediump float;\n\
+\n\
+out vec4 color;\n\
+\n\
+void main() {\n\
+    color = vec4(1.0, 0.0, 1.0, 1.0);\n\
 }\n\
 ';
 
@@ -35,32 +60,50 @@ var quadPosBuffer;
 var quadVAO;
 var quadShaderProgram;
 
+var numExamples;
 var examplesBuffer;
 var examplesVAO;
 var examplesShaderProgram;
 
 if (gl) {
     gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(0, 0, 0, 1);
     
     quadShaderProgram = createProgram(gl, QUAD_VERT, QUAD_FRAG);
+    examplesShaderProgram = createProgram(gl, EXAMPLES_VERT, EXAMPLES_FRAG);
     
     quadPosBuffer = createBuffer(gl, new Float32Array(
             [-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]));
     quadVAO = gl.createVertexArray();
-    gl.bindVertexArray(this.quadVAO);
+    gl.bindVertexArray(quadVAO);
     bindAttribute(gl, quadPosBuffer, quadShaderProgram.a_pos, 2);
     gl.bindVertexArray(null);
 } else {
     document.body.innerHTML = "Your browser doesn't support WebGL 2.";
 }
 
+function setExamples(trainingData) {
+    numExamples = trainingData.length;
+    var array = new Float32Array(numExamples * 2);
+    var arrayIndex = 0;
+    for (example of trainingData) {
+        array[arrayIndex++] = example.features[0][0];
+        array[arrayIndex++] = example.features[2][0];
+    }
+    examplesBuffer = createBuffer(gl, array);
+    examplesVAO = gl.createVertexArray();
+    gl.bindVertexArray(examplesVAO);
+    bindAttribute(gl, examplesBuffer, examplesShaderProgram.a_pos, 2);
+    gl.bindVertexArray(null);
+}
+
 function render() {
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    
     gl.useProgram(quadShaderProgram.programID);
     gl.bindVertexArray(quadVAO);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
+    
+    gl.useProgram(examplesShaderProgram.programID);
+    gl.bindVertexArray(examplesVAO);
+    gl.drawArrays(gl.POINTS, 0, numExamples);
 }
 
 // https://github.com/mapbox/webgl-wind
