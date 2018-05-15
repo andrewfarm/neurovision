@@ -5,7 +5,10 @@
         <meta charset=utf-8></meta>
     </head>
     <body>
-        <button onclick="run()">Run</button>
+        <p id="epoch"></p>
+        <p id="accuracy"></p>
+        <p id="error"></p>
+        <button id="runbutton" onclick="run()">Run</button>
         <canvas id="canvas">Your browser <em>sucks</em>.</canvas>
         <script src="network.js"></script>
         <script type="text/javascript">
@@ -161,12 +164,50 @@
 6.2,3.4,5.4,2.3,Iris-virginica\n\
 5.9,3.0,5.1,1.8,Iris-virginica\n\
 ";
-            
+
+            var epochField = document.getElementById("epoch");
+            var accuracyField = document.getElementById("accuracy");
+            var errorField = document.getElementById("error");
+
+            var data;
+            var network;
+            var eta = 0.1;
+            var epoch = 1;
+
+            function updateAndRender() {
+                for (var i = 0; i < 10; i++) {
+                    //var example = data.trainingData[Math.floor(Math.random() * data.trainingData.length)];
+                    var example = data.trainingData[(epoch * 10 + i) % data.trainingData.length];
+                    network.backpropAndUpdate(example.features, example.label, eta);
+                }
+                
+                // calculate accuracy on validation data
+                var numCorrect = 0;
+                var avgTotalError = 0;
+                for (var v of data.validationData) {
+                    var vOutput = network.feedForward(v.features);
+                    if (maxComponent(v.label) == maxComponent(vOutput)) {
+                        numCorrect += 1;
+                    }
+                    for (var i = 0; i < vOutput.length; i++) {
+                        avgTotalError += 0.5 * Math.pow(v.label[i][0] - vOutput[i][0], 2);
+                    }
+                }
+                avgTotalError /= data.validationData.length;
+                epochField.innerHTML = "Epoch " + epoch;
+                accuracyField.innerHTML = "accuracy on validation set: " + Math.floor(numCorrect * 100 / data.validationData.length) + "%";
+                errorField.innerHTML = "avg. total error: " + avgTotalError;
+                
+                epoch++;
+                requestAnimationFrame(updateAndRender);
+            }
+
             function run() {
-                var data = loadData(irises);
+                document.getElementById("runbutton").remove();
+                data = loadData(irises);
                 console.log(data);
-                var network = new Network([4, 5, 3]);
-                network.train(data.trainingData, data.validationData, 0.1);
+                network = new Network([4, 5, 3]);
+                requestAnimationFrame(updateAndRender);
             }
         </script>
     </body>

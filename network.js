@@ -80,7 +80,8 @@ function randomMatrix(n, m) {
     for (var i = 0; i < n; i++) {
         result[i] = new Array(m);
         for (var j = 0; j < m; j++) {
-            result[i][j] = 0.0;//Math.random() * 2.0 - 1.0;
+//            result[i][j] = Math.random() * 2.0 - 1.0;
+            result[i][j] = Math.sin(i);
         }
     }
     return result;
@@ -98,7 +99,8 @@ function shuffle(array) {
     while (0 !== currentIndex) {
         
         // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
+//        randomIndex = Math.floor(Math.random() * currentIndex);
+        randomIndex = Math.floor(Math.abs(Math.sin(currentIndex)) * currentIndex);
         currentIndex -= 1;
         
         // And swap it with the current element.
@@ -165,7 +167,7 @@ function loadData(dataString) {
         }
     }
     
-//    shuffle(data);
+    shuffle(data);
     return {
         trainingData:   data.slice(0, Math.floor(data.length * 0.6)),
         validationData: data.slice(Math.floor(data.length * 0.6), Math.floor(data.length * 0.8)),
@@ -304,8 +306,8 @@ class Network {
             
             // run backpropagation 10 times before checking validation data
             for (var i = 0; i < 10; i++) {
-//                var example = trainingData[Math.floor(Math.random() * trainingData.length)];
-                var example = trainingData[(epoch * 10 + i) % trainingData.length];
+                var example = trainingData[Math.floor(Math.random() * trainingData.length)];
+//                var example = trainingData[(epoch * 10 + i) % trainingData.length];
                 this.backpropAndUpdate(example.features, example.label, eta);
             }
             
