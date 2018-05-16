@@ -200,7 +200,7 @@ function setWeights(net) {
     convertToGlMatrix(w0, net.weights[0]);
     convertToGlVector(b0, net.biases[0]);
     convertToGlMatrix(w1, net.weights[1]);
-    convertToGlVector(b1, net.weights[1]);
+    convertToGlVector(b1, net.biases[1]);
 }
 
 function render() {
