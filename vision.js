@@ -32,9 +32,19 @@ const EXAMPLES_VERT = '\
 \n\
 precision mediump float;\n\
 \n\
+vec3 classColors[3] = vec3[](\n\
+    vec3(1.0, 0.0, 1.0),\n\
+    vec3(1.0, 1.0, 0.0),\n\
+    vec3(0.0, 1.0, 1.0)\n\
+);\n\
+\n\
 in vec2 a_pos;\n\
+in float a_class;\n\
+\n\
+out vec3 v_color;\n\
 \n\
 void main() {\n\
+    v_color = classColors[int(a_class)];\n\
     gl_Position = vec4(a_pos * 2.0 - vec2(1.0, 1.0), 0.0, 1.0);\n\
     gl_PointSize = 10.0;\n\
 }\n\
@@ -45,10 +55,12 @@ const EXAMPLES_FRAG = '\
 \n\
 precision mediump float;\n\
 \n\
+in vec3 v_color;\n\
+\n\
 out vec4 color;\n\
 \n\
 void main() {\n\
-    color = vec4(1.0, 0.0, 1.0, 1.0);\n\
+    color = vec4(v_color, 1.0);\n\
 }\n\
 ';
 
@@ -61,7 +73,8 @@ var quadVAO;
 var quadShaderProgram;
 
 var numExamples;
-var examplesBuffer;
+var examplesPosBuffer;
+var examplesClassBuffer;
 var examplesVAO;
 var examplesShaderProgram;
 
@@ -83,16 +96,25 @@ if (gl) {
 
 function setExamples(trainingData) {
     numExamples = trainingData.length;
-    var array = new Float32Array(numExamples * 2);
-    var arrayIndex = 0;
+    
+    const posComponents = 2;
+    var posArray = new Float32Array(numExamples * posComponents);
+    var posArrayIndex = 0;
+    const classComponents = 1;
+    var classArray = new Float32Array(numExamples * classComponents);
+    var classArrayIndex = 0;
     for (example of trainingData) {
-        array[arrayIndex++] = example.features[0][0];
-        array[arrayIndex++] = example.features[2][0];
+        posArray[posArrayIndex++] = example.features[0][0];
+        posArray[posArrayIndex++] = example.features[2][0];
+        classArray[classArrayIndex++] = maxComponent(example.label); // maxComponent is defined in network.js
     }
-    examplesBuffer = createBuffer(gl, array);
+    examplesPosBuffer = createBuffer(gl, posArray);
+    examplesClassBuffer = createBuffer(gl, classArray);
+    
     examplesVAO = gl.createVertexArray();
     gl.bindVertexArray(examplesVAO);
-    bindAttribute(gl, examplesBuffer, examplesShaderProgram.a_pos, 2);
+    bindAttribute(gl, examplesPosBuffer, examplesShaderProgram.a_pos, posComponents);
+    bindAttribute(gl, examplesClassBuffer, examplesShaderProgram.a_class, classComponents);
     gl.bindVertexArray(null);
 }
 
@@ -155,6 +177,7 @@ function bindTexture(gl, texture, unit) {
     gl.bindTexture(gl.TEXTURE_2D, texture);
 }
 
+// modified
 function createBuffer(gl, data) {
     var buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
