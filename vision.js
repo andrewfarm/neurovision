@@ -35,17 +35,13 @@ vec3 feedForward(vec2 features) {\n\
 }\n\
 \n\
 vec3 classColor(vec3 labelVector) {\n\
-//    return vec3(\n\
-//            1.0 - labelVector.z,\n\
-//            1.0 - labelVector.x,\n\
-//            1.0 - labelVector.y);\n\
-//    return vec3(\n\
-//            1.0 - min(ceil(labelVector.z - labelVector.x), ceil(labelVector.z - labelVector.y)),\n\
-//            1.0 - min(ceil(labelVector.x - labelVector.y), ceil(labelVector.x - labelVector.z)),\n\
-//            1.0 - min(ceil(labelVector.y - labelVector.x), ceil(labelVector.y - labelVector.z)));\n\
-    return ((labelVector.x > labelVector.y) && (labelVector.x > labelVector.z)) ?\n\
-            vec3(1.0, 0.0, 1.0) :\n\
-            ((labelVector.y > labelVector.z) ? vec3(1.0, 1.0, 0.0) : vec3(0.0, 1.0, 1.0));\n\
+    return vec3(\n\
+            1.0 - labelVector.z,\n\
+            1.0 - labelVector.x,\n\
+            1.0 - labelVector.y);\n\
+//    return ((labelVector.x > labelVector.y) && (labelVector.x > labelVector.z)) ?\n\
+//            vec3(1.0, 0.0, 1.0) :\n\
+//            ((labelVector.y > labelVector.z) ? vec3(1.0, 1.0, 0.0) : vec3(0.0, 1.0, 1.0));\n\
 }\n\
 \n\
 in vec2 v_pos;\n\

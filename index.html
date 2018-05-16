@@ -181,7 +181,7 @@
             data = loadData(irises);
             console.log(data);
             network = new Network([2, 3, 3]);
-            setExamples(data.validationData);
+            setExamples(data.trainingData);
             render();
 
             function updateAndRender() {
