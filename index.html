@@ -3,6 +3,19 @@
     <head>
         <title>Neurovision</title>
         <meta charset=utf-8></meta>
+        <style>
+            .legend>div>span {
+                width: 10px;
+                height: 10px;
+                border: 1px solid black;
+                float: left;
+                margin-right: 5px;
+            }
+            .legend>div>p {
+                font-size: 10pt;
+                font-style: italic;
+            }
+        </style>
     </head>
     <body>
         <p id="epoch"></p>
@@ -10,6 +23,20 @@
         <p id="error"></p>
         <button id="startbutton" style="display: block" onclick="start()">Start</button>
         <button id="stopbutton" style="display: none" onclick="stop()">Stop</button>
+        <div class="legend">
+            <div>
+                <span style="background: #ff00ff"></span>
+                <p>Iris setosa</p>
+            </div>
+            <div>
+                <span style="background: #ffff00"></span>
+                <p>Iris versicolor</p>
+            </div>
+            <div>
+                <span style="background: #00ffff"></span>
+                <p>Iris virginica</p>
+            </div>
+        </div>
         <canvas id="canvas" width="600" height="600">Your browser <em>sucks</em>.</canvas>
         <script src="network.js"></script>
         <script src="vision.js"></script>
