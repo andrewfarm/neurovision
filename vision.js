@@ -3,7 +3,7 @@ const QUAD_VERT = '\
 \n\
 precision mediump float;\n\
 \n\
-in vec2 a_pos;\n\
+layout(location=0) in vec2 a_pos;\n\
 \n\
 out vec2 v_pos;\n\
 \n\
@@ -35,13 +35,7 @@ vec3 feedForward(vec2 features) {\n\
 }\n\
 \n\
 vec3 classColor(vec3 labelVector) {\n\
-    return vec3(\n\
-            1.0 - labelVector.z,\n\
-            1.0 - labelVector.x,\n\
-            1.0 - labelVector.y);\n\
-//    return ((labelVector.x > labelVector.y) && (labelVector.x > labelVector.z)) ?\n\
-//            vec3(1.0, 0.0, 1.0) :\n\
-//            ((labelVector.y > labelVector.z) ? vec3(1.0, 1.0, 0.0) : vec3(0.0, 1.0, 1.0));\n\
+    REPLACE WITH IMPLEMENTATION\
 }\n\
 \n\
 in vec2 v_pos;\n\
@@ -51,6 +45,19 @@ out vec4 color;\n\
 void main() {\n\
     color = vec4(classColor(feedForward(v_pos)), 1.0);\n\
 }\n\
+';
+
+const QUAD_FRAG_SMOOTH_CLASSCOLORIMPL = '\
+return vec3(\n\
+        1.0 - labelVector.z,\n\
+        1.0 - labelVector.x,\n\
+        1.0 - labelVector.y);\n\
+';
+
+const QUAD_FRAG_SHARP_CLASSCOLORIMPL = '\
+return ((labelVector.x > labelVector.y) && (labelVector.x > labelVector.z)) ?\n\
+        vec3(1.0, 0.0, 1.0) :\n\
+        ((labelVector.y > labelVector.z) ? vec3(1.0, 1.0, 0.0) : vec3(0.0, 1.0, 1.0));\n\
 ';
 
 const EXAMPLES_VERT = '\
@@ -123,7 +130,8 @@ const gl = canvas.getContext("webgl2");
 
 var quadPosBuffer;
 var quadVAO;
-var quadShaderProgram;
+var quadSmoothShaderProgram;
+var quadSharpShaderProgram;
 
 var numExamples;
 var examplesPosBuffer;
@@ -131,6 +139,8 @@ var examplesClassBuffer;
 var examplesVAO;
 var examplesShaderProgram;
 var examplesOutlineShaderProgram;
+
+var showUncertainty = true;
 
 var w0 = new Float32Array(6);
 var b0 = new Float32Array(3);
@@ -140,7 +150,12 @@ var b1 = new Float32Array(3);
 if (gl) {
     gl.viewport(0, 0, canvas.width, canvas.height);
     
-    quadShaderProgram = createProgram(gl, QUAD_VERT, QUAD_FRAG);
+    quadSmoothShaderProgram = createProgram(gl, QUAD_VERT, QUAD_FRAG.replace(
+            'REPLACE WITH IMPLEMENTATION',
+            QUAD_FRAG_SMOOTH_CLASSCOLORIMPL));
+    quadSharpShaderProgram = createProgram(gl, QUAD_VERT, QUAD_FRAG.replace(
+            'REPLACE WITH IMPLEMENTATION',
+            QUAD_FRAG_SHARP_CLASSCOLORIMPL));
     examplesShaderProgram = createProgram(gl, EXAMPLES_VERT, EXAMPLES_FRAG);
     examplesOutlineShaderProgram = createProgram(gl, EXAMPLES_OUTLINE_VERT, EXAMPLES_OUTLINE_FRAG);
     
@@ -148,10 +163,14 @@ if (gl) {
             [-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]));
     quadVAO = gl.createVertexArray();
     gl.bindVertexArray(quadVAO);
-    bindAttribute(gl, quadPosBuffer, quadShaderProgram.a_pos, 2);
+    bindAttribute(gl, quadPosBuffer, 0, 2);
     gl.bindVertexArray(null);
 } else {
     document.body.innerHTML = "Your browser doesn't support WebGL 2.";
+}
+
+function setShowUncertainty(aFlag) {
+    showUncertainty = aFlag;
 }
 
 function setExamples(trainingData) {
@@ -200,6 +219,7 @@ function setWeights(net) {
 }
 
 function render() {
+    var quadShaderProgram = showUncertainty ? quadSmoothShaderProgram : quadSharpShaderProgram;
     gl.useProgram(quadShaderProgram.programID);
     gl.bindVertexArray(quadVAO);
     //the matrices and vectors in the shaders are transposed, so transpose is set to true
