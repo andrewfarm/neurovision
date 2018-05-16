@@ -175,13 +175,13 @@
 
             var data;
             var network;
-            var eta = 0.2;
+            var eta = 0.1;
             var epoch = 1;
             
             data = loadData(irises);
             console.log(data);
-            network = new Network([2, 5, 3]);
-            setExamples(data.trainingData);
+            network = new Network([2, 3, 3]);
+            setExamples(data.validationData);
             render();
 
             function updateAndRender() {
@@ -210,6 +210,7 @@
                 
                 epoch++;
                 
+                setWeights(network);
                 render();
                 
                 if (running) {
