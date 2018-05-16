@@ -127,8 +127,8 @@ function shuffle(array) {
  */
 function loadData(dataString) {
     data = [];
-    minFeatures = [Infinity, Infinity, Infinity, Infinity];
-    maxFeatures = [0.0, 0.0, 0.0, 0.0];
+    minFeatures = [Infinity, Infinity];
+    maxFeatures = [0.0, 0.0];
     labels = {"Iris-setosa": 0, "Iris-versicolor": 1, "Iris-virginica": 2};
     
     // convert string to vectors of floating-point data
@@ -136,9 +136,10 @@ function loadData(dataString) {
         if (line.length > 0) {
             var substrings = line.split(",");
             
-            var featureVector = []
-            for (var i = 0; i < substrings.length - 1; i++) {
-                featureValue = parseFloat(substrings[i]);
+            var featureVector = [];
+            var featureIndices = [0, 2];
+            for (var i = 0; i < 2; i++) {
+                featureValue = parseFloat(substrings[featureIndices[i]]);
                 featureVector.push([featureValue]);
                 if (featureValue < minFeatures[i]) {
                     minFeatures[i] = featureValue;

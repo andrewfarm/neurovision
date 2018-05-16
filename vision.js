@@ -105,7 +105,7 @@ function setExamples(trainingData) {
     var classArrayIndex = 0;
     for (example of trainingData) {
         posArray[posArrayIndex++] = example.features[0][0];
-        posArray[posArrayIndex++] = example.features[2][0];
+        posArray[posArrayIndex++] = example.features[1][0];
         classArray[classArrayIndex++] = maxComponent(example.label); // maxComponent is defined in network.js
     }
     examplesPosBuffer = createBuffer(gl, posArray);
