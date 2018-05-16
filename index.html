@@ -21,7 +21,7 @@
         <p id="epoch"></p>
         <p id="accuracy"></p>
         <p id="error"></p>
-        <input type="checkbox" id="show-uncertainty-checkbox" onchange="showUncertaintyCheckboxChanged()"checked>
+        <input type="checkbox" id="show-uncertainty-checkbox" onchange="showUncertaintyCheckboxChanged()" checked>
         <label for="show-uncertainty-checkbox">Show uncertainty</label>
         <button id="startbutton" style="display: block" onclick="start()">Start</button>
         <button id="stopbutton" style="display: none" onclick="stop()">Stop</button>
@@ -249,6 +249,7 @@
         
             function showUncertaintyCheckboxChanged() {
                 setShowUncertainty(document.getElementById("show-uncertainty-checkbox").checked);
+                render();
             }
 
             function start() {
