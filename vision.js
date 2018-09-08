@@ -68,8 +68,8 @@ vec3 classColors[3] = vec3[](\n\
     vec3(0.0, 1.0, 1.0)\n\
 );\n\
 \n\
-in vec2 a_pos;\n\
-in float a_class;\n\
+layout(location=0) in vec2 a_pos;\n\
+layout(location=1) in float a_class;\n\
 \n\
 out vec3 v_color;\n\
 \n\
@@ -99,8 +99,8 @@ const EXAMPLES_OUTLINE_VERT = '\
 \n\
 precision mediump float;\n\
 \n\
-in vec2 a_pos;\n\
-in float a_class;\n\
+layout(location=0) in vec2 a_pos;\n\
+layout(location=1) in float a_class;\n\
 \n\
 void main() {\n\
     float dummy = a_class;\n\
@@ -189,8 +189,8 @@ function setExamples(trainingData) {
     
     examplesVAO = gl.createVertexArray();
     gl.bindVertexArray(examplesVAO);
-    bindAttribute(gl, examplesPosBuffer, examplesShaderProgram.a_pos, posComponents);
-    bindAttribute(gl, examplesClassBuffer, examplesShaderProgram.a_class, classComponents);
+    bindAttribute(gl, examplesPosBuffer, 0, posComponents);
+    bindAttribute(gl, examplesClassBuffer, 1, classComponents);
     gl.bindVertexArray(null);
 }
 
@@ -219,7 +219,6 @@ function render() {
     var quadShaderProgram = showUncertainty ? quadSmoothShaderProgram : quadSharpShaderProgram;
     gl.useProgram(quadShaderProgram.programID);
     gl.bindVertexArray(quadVAO);
-    //the matrices and vectors in the shaders are transposed, so transpose is set to true
     gl.uniformMatrix2x3fv(quadShaderProgram.u_w0, false, w0);
     gl.uniform3fv(quadShaderProgram.u_b0, b0);
     gl.uniformMatrix3fv(quadShaderProgram.u_w1, false, w1);
