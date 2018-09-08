@@ -48,10 +48,7 @@ void main() {\n\
 ';
 
 const QUAD_FRAG_SMOOTH_CLASSCOLORIMPL = '\
-return vec3(\n\
-        1.0 - labelVector.z,\n\
-        1.0 - labelVector.x,\n\
-        1.0 - labelVector.y);\n\
+return vec3(1.0) - labelVector.zxy;\n\
 ';
 
 const QUAD_FRAG_SHARP_CLASSCOLORIMPL = '\
