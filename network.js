@@ -137,7 +137,7 @@ function loadData(dataString) {
             var substrings = line.split(",");
             
             var featureVector = [];
-            var featureIndices = [0, 2];
+            var featureIndices = [1, 3];
             for (var i = 0; i < 2; i++) {
                 featureValue = parseFloat(substrings[featureIndices[i]]);
                 featureVector.push([featureValue]);
