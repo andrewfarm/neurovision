@@ -9,7 +9,7 @@
             }
             body {
                 text-align: center;
-                padding: 20px;
+                margin: 10px;
             }
             body * {
                 text-align: left;
@@ -19,6 +19,11 @@
                 padding: 20px;
                 border: 3px solid #cccccc;
                 border-radius: 10px;
+            }
+            #container {
+                margin-left: auto;
+                margin-right: auto;
+                display: inline-block;
             }
             .box2 {
                 background-color: #dddddd;
@@ -32,11 +37,6 @@
             .box2 * {
                 margin-top: 3px;
                 margin-bottom: 3px;
-            }
-            #content {
-                margin-left: auto;
-                margin-right: auto;
-                display: inline-block;
             }
             #content > * {
                 vertical-align: top;
@@ -67,67 +67,80 @@
         </style>
     </head>
     <body>
-        <div id="content" class="box1">
-            <table style="display: inline-block;">
-                <tr>
-                    <td>
-                        <table style="height: 512px; margin-right: 20px;">
+        <table id="container">
+            <tr>
+                <td style="width: 25%;">
+                    <div class="box1" style="font-size: 13.5pt;">
+                        <h2>Watch as the function learned by this neural net evolves in real-time.</h2>
+                        <p>The visualization on the right uses general-purpose GPU computation techniques to run a neural network on each pixel in the problem space as it trains.</p>
+                        <p>The massively parallel nature of GPU processing, along with the GPU's efficient matrix and vector computation capabilities, makes it possible to classify each pixel in real-time, and see the network adapting to the training data.</p>
+                    </div>
+                </td>
+                <td>
+                    <div id="content" class="box1">
+                        <table style="display: inline-block;">
                             <tr>
-                                <td class="sideways" id="max-y" style="vertical-align: top;"></td>
+                                <td>
+                                    <table style="height: 512px; margin-right: 20px;">
+                                        <tr>
+                                            <td class="sideways" id="max-y" style="vertical-align: top;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="sideways" id="label-y" style="vertical-align: middle;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="sideways" id="min-y" style="vertical-align: bottom;"></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>
+                                    <canvas id="canvas" width="512" height="512"></canvas>
+                                </td>
                             </tr>
+                                <td></td>
+                                <td>
+                                    <table style="width: 512px">
+                                        <tr>
+                                            <td id="min-x" style="text-align: left;"></td>
+                                            <td id="label-x" style="text-align: center;"></td>
+                                            <td id="max-x" style="text-align: right;"></td>
+                                        </tr>
+                                    </table>
+                                </td>
                             <tr>
-                                <td class="sideways" id="label-y" style="vertical-align: middle;"></td>
-                            </tr>
-                            <tr>
-                                <td class="sideways" id="min-y" style="vertical-align: bottom;"></td>
                             </tr>
                         </table>
-                    </td>
-                    <td>
-                        <canvas id="canvas" width="512" height="512"></canvas>
-                    </td>
-                </tr>
-                    <td></td>
-                    <td>
-                        <table style="width: 512px">
-                            <tr>
-                                <td id="min-x" style="text-align: left;"></td>
-                                <td id="label-x" style="text-align: center;"></td>
-                                <td id="max-x" style="text-align: right;"></td>
-                            </tr>
-                        </table>
-                    </td>
-                <tr>
-                </tr>
-            </table>
-            <div id="sidebar">
-                <div class="box2">
-                    <input type="checkbox" id="show-uncertainty-checkbox" onchange="showUncertaintyCheckboxChanged()" checked>
-                    <label for="show-uncertainty-checkbox">Show uncertainty</label>
-                    <button id="startbutton" style="display: block" onclick="start()">Start</button>
-                    <button id="stopbutton" style="display: none" onclick="stop()">Stop</button>
-                </div>
-                <div class="box2">
-                    <p>Epoch <span id="epoch"></span></p>
-                    <p>Accuracy on validation dataset: <span id="accuracy"></span></p>
-                    <p>Avg. total error: <span id="error"></span></p>
-                </div>
-                <div class="legend box2">
-                    <div>
-                        <span style="background: #ff00ff"></span>
-                        <p>Iris setosa</p>
+                        <div id="sidebar">
+                            <div class="box2">
+                                <input type="checkbox" id="show-uncertainty-checkbox" onchange="showUncertaintyCheckboxChanged()" checked>
+                                <label for="show-uncertainty-checkbox">Show uncertainty</label>
+                                <button id="startbutton" style="display: block" onclick="start()">Start</button>
+                                <button id="stopbutton" style="display: none" onclick="stop()">Stop</button>
+                            </div>
+                            <div class="box2">
+                                <p>Epoch <span id="epoch"></span></p>
+                                <p>Accuracy on validation dataset: <span id="accuracy"></span></p>
+                                <p>Avg. total error: <span id="error"></span></p>
+                            </div>
+                            <div class="legend box2">
+                                <div>
+                                    <span style="background: #ff00ff"></span>
+                                    <p>Iris setosa</p>
+                                </div>
+                                <div>
+                                    <span style="background: #ffff00"></span>
+                                    <p>Iris versicolor</p>
+                                </div>
+                                <div>
+                                    <span style="background: #00ffff"></span>
+                                    <p>Iris virginica</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <span style="background: #ffff00"></span>
-                        <p>Iris versicolor</p>
-                    </div>
-                    <div>
-                        <span style="background: #00ffff"></span>
-                        <p>Iris virginica</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+                </td>
+            </tr>
+        </table>
         <script src="network.js"></script>
         <script src="vision.js"></script>
         <script type="text/javascript">
