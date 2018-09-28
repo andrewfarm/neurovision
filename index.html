@@ -41,6 +41,9 @@
             #content > * {
                 vertical-align: top;
             }
+            .sideways {
+                writing-mode: vertical-lr;
+            }
             #canvas {
                 display: inline-block;
                 border: 3px solid #444444;
@@ -65,7 +68,38 @@
     </head>
     <body>
         <div id="content" class="box1">
-            <canvas id="canvas" width="512" height="512">Your browser <em>sucks</em>.</canvas>
+            <table style="display: inline-block;">
+                <tr>
+                    <td>
+                        <table style="height: 512px; margin-right: 20px;">
+                            <tr>
+                                <td class="sideways" id="max-y" style="vertical-align: top;"></td>
+                            </tr>
+                            <tr>
+                                <td class="sideways" id="label-y" style="vertical-align: middle;"></td>
+                            </tr>
+                            <tr>
+                                <td class="sideways" id="min-y" style="vertical-align: bottom;"></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                        <canvas id="canvas" width="512" height="512"></canvas>
+                    </td>
+                </tr>
+                    <td></td>
+                    <td>
+                        <table style="width: 512px">
+                            <tr>
+                                <td id="min-x" style="text-align: left;"></td>
+                                <td id="label-x" style="text-align: center;"></td>
+                                <td id="max-x" style="text-align: right;"></td>
+                            </tr>
+                        </table>
+                    </td>
+                <tr>
+                </tr>
+            </table>
             <div id="sidebar">
                 <div class="box2">
                     <input type="checkbox" id="show-uncertainty-checkbox" onchange="showUncertaintyCheckboxChanged()" checked>
@@ -250,19 +284,36 @@
 5.9,3.0,5.1,1.8,Iris-virginica\n\
 ";
 
+            var labelX = document.getElementById("label-x");
+            var labelY = document.getElementById("label-y");
+            var minX = document.getElementById("min-x");
+            var minY = document.getElementById("min-y");
+            var maxX = document.getElementById("max-x");
+            var maxY = document.getElementById("max-y");
+
             var epochField = document.getElementById("epoch");
             var accuracyField = document.getElementById("accuracy");
             var errorField = document.getElementById("error");
             
             var running = false;
 
+            var dataObject;
             var data;
             var network;
             var eta = 0.2;
             var epoch = 1;
             
-            data = loadData(irises);
-            console.log(data);
+            const FEATURE_LABELS = ["Sepal Length", "Sepal Width", "Petal Length", "Petal Width"];
+            
+            dataObject = loadData(irises);
+            labelX.innerHTML = FEATURE_LABELS[3] + " (cm)";
+            labelY.innerHTML = FEATURE_LABELS[1] + " (cm)";
+            minX.innerHTML = dataObject.minFeatures[0].toFixed(1);
+            minY.innerHTML = dataObject.minFeatures[1].toFixed(1);
+            maxX.innerHTML = dataObject.maxFeatures[0].toFixed(1);
+            maxY.innerHTML = dataObject.maxFeatures[1].toFixed(1);
+            data = dataObject.data;
+            console.log(dataObject);
             network = new Network([2, 3, 3]);
             setExamples(data.trainingData);
             render();

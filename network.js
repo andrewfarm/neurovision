@@ -126,10 +126,10 @@ function shuffle(array) {
  *     3. Iris virginica
  */
 function loadData(dataString) {
-    data = [];
-    minFeatures = [Infinity, Infinity];
-    maxFeatures = [0.0, 0.0];
-    labels = {"Iris-setosa": 0, "Iris-versicolor": 1, "Iris-virginica": 2};
+    var data = [];
+    var minFeatures = [Infinity, Infinity];
+    var maxFeatures = [0.0, 0.0];
+    const labels = {"Iris-setosa": 0, "Iris-versicolor": 1, "Iris-virginica": 2};
     
     // convert string to vectors of floating-point data
     for (line of dataString.split("\n")) {
@@ -168,9 +168,13 @@ function loadData(dataString) {
     
     shuffle(data);
     return {
-        trainingData:   data.slice(0, Math.floor(data.length * 0.6)),
-        validationData: data.slice(Math.floor(data.length * 0.6), Math.floor(data.length * 0.8)),
-        testData:       data.slice(Math.floor(data.length * 0.8))
+        minFeatures: minFeatures,
+        maxFeatures: maxFeatures,
+        data: {
+            trainingData:   data.slice(0, Math.floor(data.length * 0.6)),
+            validationData: data.slice(Math.floor(data.length * 0.6), Math.floor(data.length * 0.8)),
+            testData:       data.slice(Math.floor(data.length * 0.8))
+        }
     };
 }
 
